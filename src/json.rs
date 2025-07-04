@@ -11,27 +11,119 @@ use unscanny::Scanner;
 /// A CSL-JSON item.
 #[derive(Debug, Serialize, Deserialize, Hash, PartialEq, Eq)]
 #[serde(transparent)]
-pub struct Item(pub BTreeMap<String, Value>);
+pub struct Item {
+    /// Citation id
+    pub id: Value,
+    /// Citation key. Seems to be unused.
+    pub citation_key: Option<String>,
+    /// ???
+    pub categories: Option<Vec<String>>,
+    /// The language of the item;
+    /// Should be entered as an ISO 639-1 two-letter language code (e.g. “en”, “zh”),
+    /// optionally with a two-letter locale code (e.g. “de-DE”, “de-AT”)
+    pub language: Option<String>,
+
+    /// Chapter number (e.g. chapter number in a book; track number on an album)
+    pub chapter_number: Option<NumberOrString>,
+
+    /// Abstract of the item (e.g. the abstract of a journal article)
+    #[serde(rename = "abstract")]
+    pub abstract_: Option<String>,
+
+    /// Date the item has been accessed
+    pub accessed: Option<DateValue>,
+    /// Date the item was initially available (e.g. the online publication date of a journal article before its formal publication date; the date a treaty was made available for signing)
+    pub available_date: Option<DateValue>,
+    /// Date the event related to an item took place
+    pub event_date: Option<DateValue>,
+    /// Date the item was issued/published
+    pub issued: Option<DateValue>,
+    /// Issue date of the original version
+    pub original_date: Option<DateValue>,
+    /// Date the item (e.g. a manuscript) was submitted for publication
+    pub submitted: Option<DateValue>,
+
+    /// Author
+    pub author: Option<Vec<NameValue>>,
+    /// The person leading the session containing a presentation (e.g. the organizer of the `container-title` of a `speech`)
+    pub chair: Option<Vec<NameValue>>,
+    /// Editor of the collection holding the item (e.g. the series editor for a book)
+    pub collection_editor: Option<Vec<NameValue>>,
+    /// Person compiling or selecting material for an item from the works of various persons or bodies (e.g. for an anthology)
+    pub compiler: Option<Vec<NameValue>>,
+    /// Composer (e.g. of a musical score)
+    pub composer: Option<Vec<NameValue>>,
+    /// Author of the container holding the item (e.g. the book author for a book chapter)
+    pub container_author: Option<Vec<NameValue>>,
+    /// A minor contributor to the item; typically cited using “with” before the name when listed in a bibliography
+    pub contributor: Option<Vec<NameValue>>,
+    /// Curator of an exhibit or collection (e.g. in a museum)
+    pub curator: Option<Vec<NameValue>>,
+    /// Director (e.g. of a film)
+    pub director: Option<Vec<NameValue>>,
+    /// Editor
+    pub editor: Option<Vec<NameValue>>,
+    /// Managing editor (“Directeur de la Publication” in French)
+    pub editorial_director: Option<Vec<NameValue>>,
+    /// Combined editor and translator of a work;
+    /// The citation processory must be automatically generate if editor and translator variables are identical;
+    /// May also be provided directly in item data
+    pub editorial_translator: Option<Vec<NameValue>>,
+    /// Executive producer (e.g. of a television series)
+    pub executive_producer: Option<Vec<NameValue>>,
+    /// Guest (e.g. on a TV show or podcast)
+    pub guest: Option<Vec<NameValue>>,
+    /// Host (e.g. of a TV show or podcast)
+    pub host: Option<Vec<NameValue>>,
+    /// Interviewer (e.g. of an interview)
+    pub interviewer: Option<Vec<NameValue>>,
+    /// Illustrator (e.g. of a children’s book or graphic novel)
+    pub illustrator: Option<Vec<NameValue>>,
+    /// Narrator (e.g. of an audio book)
+    pub narrator: Option<Vec<NameValue>>,
+    /// Organizer of an event (e.g. organizer of a workshop or conference)
+    pub organizer: Option<Vec<NameValue>>,
+    /// The original creator of a work (e.g. the form of the author name listed on the original version of a book; the historical author of a work; the original songwriter or performer for a musical piece; the original developer or programmer for a piece of software; the original author of an adapted work such as a book adapted into a screenplay)
+    pub original_author: Option<Vec<NameValue>>,
+    /// Performer of an item (e.g. an actor appearing in a film; a muscian performing a piece of music)
+    pub performer: Option<Vec<NameValue>>,
+    /// Producer (e.g. of a television or radio broadcast)
+    pub producer: Option<Vec<NameValue>>,
+    /// Recipient (e.g. of a letter)
+    pub recipient: Option<Vec<NameValue>>,
+    /// Author of the item reviewed by the current item
+    pub reviewed_author: Option<Vec<NameValue>>,
+    /// Writer of a script or screenplay (e.g. of a film)
+    pub script_writer: Option<Vec<NameValue>>,
+    /// Creator of a series (e.g. of a television series)
+    pub series_creator: Option<Vec<NameValue>>,
+    /// Translator
+    pub translator: Option<Vec<NameValue>>,
+
+    #[serde(rename = "type")]
+    pub type_: Kind,
+    pub note: Option<String>,
+}
 
 impl Item {
     /// The item's ID.
-    pub fn id(&self) -> Option<Cow<str>> {
-        self.0.get("id")?.to_str()
+    pub fn id(&self) -> Cow<str> {
+        todo!()
     }
 
     /// The item type.
-    pub fn type_(&self) -> Option<Cow<str>> {
-        self.0.get("type")?.to_str()
+    pub fn type_(&self) -> Kind {
+        self.type_
     }
 
     /// Whether any of the fields values contains any HTML.
     pub fn has_html(&self) -> bool {
-        self.0.values().any(|v| v.has_html())
+        todo!()
     }
 
     /// Whether this entry may contain "cheater syntax" for odd fields.
     pub fn may_have_hack(&self) -> bool {
-        self.0.contains_key("note")
+        self.note.is_some()
     }
 }
 
