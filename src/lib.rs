@@ -18,7 +18,7 @@ use std::fs;
 use citationberg::Style;
 
 let string = fs::read_to_string("tests/independent/ieee.csl")?;
-let style = citationberg::Style::from_xml(&string)?;
+let style = Style::from_xml(&string)?;
 
 let Style::Independent(independent) = style else {
     panic!("IEEE is an independent style");
@@ -794,7 +794,7 @@ pub struct StyleInfo {
     /// Contributors to the style
     #[serde(rename = "contributor")]
     #[serde(default)]
-    pub contibutors: Vec<StyleAttribution>,
+    pub contributors: Vec<StyleAttribution>,
     /// Which format the citations are in.
     #[serde(default)]
     pub category: Vec<StyleCategory>,
@@ -847,7 +847,8 @@ impl StyleInfo {
 
         match level {
             PurgeLevel::Basic => {
-                for person in self.authors.iter_mut().chain(self.contibutors.iter_mut()) {
+                for person in self.authors.iter_mut().chain(self.contributors.iter_mut())
+                {
                     person.email = None;
                     person.uri = None;
                 }
@@ -857,7 +858,7 @@ impl StyleInfo {
             }
             PurgeLevel::Full => {
                 self.authors.clear();
-                self.contibutors.clear();
+                self.contributors.clear();
                 self.link.retain(|i| i.rel == InfoLinkRel::IndependentParent);
                 self.rights = None;
             }
@@ -2657,7 +2658,7 @@ pub struct VariablelessLabel {
     /// What variant of label is chosen.
     #[serde(rename = "@form", default)]
     pub form: TermForm,
-    /// How to pluiralize the label.
+    /// How to pluralize the label.
     #[serde(rename = "@plural", default)]
     pub plural: LabelPluralize,
     /// Override formatting style.
@@ -3158,10 +3159,10 @@ impl TryFrom<Locale> for LocaleFile {
     type Error = ();
 
     fn try_from(value: Locale) -> Result<Self, Self::Error> {
-        if value.lang.is_some() {
+        if let Some(lang) = value.lang {
             Ok(Self {
                 version: "1.0".to_string(),
-                lang: value.lang.unwrap(),
+                lang,
                 info: value.info,
                 terms: value.terms,
                 date: value.date,
@@ -3461,7 +3462,7 @@ pub enum Display {
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum TextCase {
-    /// lowecase.
+    /// lowercase.
     Lowercase,
     /// UPPERCASE.
     Uppercase,

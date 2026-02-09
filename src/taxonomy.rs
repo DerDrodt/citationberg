@@ -483,8 +483,8 @@ pub enum NameVariable {
     Editor,
     /// Managing editor (“Directeur de la Publication” in French).
     EditorialDirector,
-    /// Combined editor and translator of a work; The citation processory must
-    /// be automatically generate if editor and translator variables are
+    /// Combined editor and translator of a work; The citation processor must
+    /// automatically generate it if editor and translator variables are
     /// identical; May also be provided directly in item data.
     #[serde(alias = "editortranslator")]
     EditorTranslator,
@@ -508,7 +508,7 @@ pub enum NameVariable {
     /// developer or programmer for a piece of software; the original author of
     /// an adapted work such as a book adapted into a screenplay).
     OriginalAuthor,
-    /// Performer of an item (e.g. an actor appearing in a film; a muscian
+    /// Performer of an item (e.g. an actor appearing in a film; a musician
     /// performing a piece of music).
     Performer,
     /// Producer (e.g. of a television or radio broadcast).
