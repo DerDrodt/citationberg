@@ -99,6 +99,8 @@ pub struct NameItem {
     pub dropping_particle: Option<String>,
     /// A name suffix like `"Jr., Ph.D."`.
     pub suffix: Option<String>,
+    /// Whether a comma should be added before the suffix, e.g., `Smith, Jr.`
+    pub comma_suffix: Option<bool>,
 }
 
 /// A name that doesn't necessarily follow the schema of a `NameItem`. May be
@@ -572,6 +574,7 @@ mod tests {
                 non_dropping_particle: None,
                 dropping_particle: None,
                 suffix: None,
+                comma_suffix: None,
             })]),
         );
         map.insert(
